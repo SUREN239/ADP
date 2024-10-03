@@ -1,0 +1,319 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Maze Robustness Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #maze {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        #maze td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .start { background-color: #90EE90; }
+        .end { background-color: #FFA07A; }
+        .path { background-color: #87CEFA; }
+        .obstacle { background-color: #FF6347; }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Matrix Maze Robustness Analyzer</h1>
+    <div id="mazeContainer"></div>
+    <button id="analyzePath">Analyze Path</button>
+    <button id="nextLevel">Next Level</button>
+    <div id="message"></div>
+
+    <script>
+        const rows = 8;
+        const cols = 8;
+        let maze = [];
+        let path = [];
+        let currentLevel = 1;
+        let obstacles = [];
+
+        function initializeMaze() {
+            maze = Array(rows).fill().map(() => Array(cols).fill(0));
+            maze[0][0] = 'S'; // Start
+            maze[rows-1][cols-1] = 'E'; // End
+            renderMaze();
+        }
+
+        function renderMaze() {
+            const table = document.createElement('table');
+            table.id = 'maze';
+            for (let i = 0; i < rows; i++) {
+                const row = table.insertRow();
+                for (let j = 0; j < cols; j++) {
+                    const cell = row.insertCell();
+                    cell.textContent = maze[i][j];
+                    if (maze[i][j] === 'S') cell.className = 'start';
+                    if (maze[i][j] === 'E') cell.className = 'end';
+                    if (maze[i][j] === 'X') cell.className = 'obstacle';
+                    cell.addEventListener('click', () => cellClicked(i, j));
+                }
+            }
+            const container = document.getElementById('mazeContainer');
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        function cellClicked(i, j) {
+            if (maze[i][j] === 0) {
+                maze[i][j] = '*';
+                path.push({x: j, y: i});
+            } else if (maze[i][j] === '*') {
+                maze[i][j] = 0;
+                path = path.filter(p => p.x !== j || p.y !== i);
+            }
+            renderMaze();
+        }
+
+        function analyzePath() {
+            let message = "";
+            let isValid = true;
+
+            // Check if path starts at 'S' and ends at 'E'
+            if (path.length === 0 || 
+                path[0].x !== 0 || path[0].y !== 0 || 
+                path[path.length-1].x !== cols-1 || path[path.length-1].y !== rows-1) {
+                isValid = false;
+                message += "Path must start at 'S' and end at 'E'. ";
+            }
+
+            // Check for continuity and obstacles
+            for (let i = 1; i < path.length; i++) {
+                const prev = path[i-1];
+                const curr = path[i];
+                const dx = Math.abs(curr.x - prev.x);
+                const dy = Math.abs(curr.y - prev.y);
+                if (dx + dy !== 1) {
+                    isValid = false;
+                    message += "Path must be continuous. ";
+                    break;
+                }
+                if (maze[curr.y][curr.x] === 'X') {
+                    isValid = false;
+                    message += "Path encounters an obstacle. ";
+                    break;
+                }
+            }
+
+            if (isValid) {
+                message += "Path is valid and robust! ";
+            } else {
+                message += "Path needs improvement. ";
+            }
+
+            document.getElementById('message').textContent = message;
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            // Add a new obstacle
+            let obstacleAdded = false;
+            while (!obstacleAdded) {
+                const x = Math.floor(Math.random() * cols);
+                const y = Math.floor(Math.random() * rows);
+                if (maze[y][x] === 0) {
+                    maze[y][x] = 'X';
+                    obstacles.push({x, y});
+                    obstacleAdded = true;
+                }
+            }
+            document.getElementById('message').textContent = `Level ${currentLevel}: New obstacle added. Analyze your path again.`;
+            renderMaze();
+        }
+
+        document.getElementById('analyzePath').addEventListener('click', analyzePath);
+        document.getElementById('nextLevel').addEventListener('click', nextLevel);
+
+        initializeMaze();
+    </script>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8x8 Matrix Maze Robustness Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #maze {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        #maze td {
+            width: 60px;
+            height: 60px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .start { background-color: #90EE90; }
+        .end { background-color: #FFA07A; }
+        .path { background-color: #87CEFA; }
+        .obstacle { background-color: #FF6347; }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>8x8 Matrix Maze Robustness Analyzer</h1>
+    <div id="mazeContainer"></div>
+    <button id="analyzePath">Analyze Path</button>
+    <button id="nextLevel">Next Level</button>
+    <div id="message"></div>
+
+    <script>
+        const rows = 8;
+        const cols = 8;
+        let maze = [];
+        let path = [];
+        let currentLevel = 1;
+        let obstacles = [];
+
+        function initializeMaze() {
+            maze = Array(rows).fill().map(() => Array(cols).fill(0));
+            maze[0][0] = 'S'; // Start
+            maze[rows-1][cols-1] = 'E'; // End
+            renderMaze();
+        }
+
+        function renderMaze() {
+            const table = document.createElement('table');
+            table.id = 'maze';
+            for (let i = 0; i < rows; i++) {
+                const row = table.insertRow();
+                for (let j = 0; j < cols; j++) {
+                    const cell = row.insertCell();
+                    const cellContent = document.createElement('div');
+                    cellContent.textContent = `(${i},${j})`;
+                    
+                    if (maze[i][j] === 'S') {
+                        cell.className = 'start';
+                        cellContent.textContent += '\nS';
+                    } else if (maze[i][j] === 'E') {
+                        cell.className = 'end';
+                        cellContent.textContent += '\nE';
+                    } else if (maze[i][j] === 'X') {
+                        cell.className = 'obstacle';
+                        cellContent.textContent += '\nX';
+                    } else if (maze[i][j] === '*') {
+                        cell.className = 'path';
+                        cellContent.textContent += '\n*';
+                    }
+                    
+                    cell.appendChild(cellContent);
+                    cell.addEventListener('click', () => cellClicked(i, j));
+                }
+            }
+            const container = document.getElementById('mazeContainer');
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        function cellClicked(i, j) {
+            if (maze[i][j] === 0) {
+                maze[i][j] = '*';
+                path.push({x: j, y: i});
+            } else if (maze[i][j] === '*') {
+                maze[i][j] = 0;
+                path = path.filter(p => p.x !== j || p.y !== i);
+            }
+            renderMaze();
+        }
+
+        function analyzePath() {
+            let message = "";
+            let isValid = true;
+
+            if (path.length === 0 || 
+                path[0].x !== 0 || path[0].y !== 0 || 
+                path[path.length-1].x !== cols-1 || path[path.length-1].y !== rows-1) {
+                isValid = false;
+                message += "Path must start at 'S' and end at 'E'. ";
+            }
+
+            for (let i = 1; i < path.length; i++) {
+                const prev = path[i-1];
+                const curr = path[i];
+                const dx = Math.abs(curr.x - prev.x);
+                const dy = Math.abs(curr.y - prev.y);
+                if (dx + dy !== 1) {
+                    isValid = false;
+                    message += "Path must be continuous. ";
+                    break;
+                }
+                if (maze[curr.y][curr.x] === 'X') {
+                    isValid = false;
+                    message += "Path encounters an obstacle. ";
+                    break;
+                }
+            }
+
+            if (isValid) {
+                message += "Path is valid and robust! ";
+            } else {
+                message += "Path needs improvement. ";
+            }
+
+            document.getElementById('message').textContent = message;
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            let obstacleAdded = false;
+            while (!obstacleAdded) {
+                const x = Math.floor(Math.random() * cols);
+                const y = Math.floor(Math.random() * rows);
+                if (maze[y][x] === 0) {
+                    maze[y][x] = 'X';
+                    obstacles.push({x, y});
+                    obstacleAdded = true;
+                }
+            }
+            document.getElementById('message').textContent = `Level ${currentLevel}: New obstacle added. Analyze your path again.`;
+            renderMaze();
+        }
+
+        document.getElementById('analyzePath').addEventListener('click', analyzePath);
+        document.getElementById('nextLevel').addEventListener('click', nextLevel);
+
+        initializeMaze();
+    </script>
+</body>
+</html>
